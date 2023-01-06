@@ -27,7 +27,7 @@ vector<Process>& System::Processes() {
   for (auto pid: proccessIDs_) {
     // Note when using emplace_back() dont need to use constructor, i.e., Process p(pid);
     // emplace_back will call it automatically 
-    processes_.emplace_back(p);
+    processes_.emplace_back(pid);
     }
   // sort processes according to RAM (if equal CPU Utilization)
   std::sort(processes_.begin(), processes_.end(), 

@@ -11,6 +11,9 @@
 
 
 template <typename T>
+/*Question:which is better? 
+Defining this template functions under LinuxParser namspace or outside of it?
+*/
 T LinuxParser::findValueByKey(std::string const &keyFilter, std::string const &filename){
   std::string line, key;
   T value;
@@ -27,6 +30,7 @@ T LinuxParser::findValueByKey(std::string const &keyFilter, std::string const &f
       }
     }
   }
+  return value;
 }
 
 template <typename T>
@@ -101,13 +105,11 @@ std::vector<int> LinuxParser::Pids() {
 
 // Parse memory information of system and calculate memory utilization
 float LinuxParser::MemoryUtilization() { 
-  std::string memTotal = "MemTotal:";
-  std::string memFree = "MemFree:"; 
   float Total {0.1}, Free {0.1};
 
-  std::string totalValue = findValueByKey<std::string>(memTotal, kMeminfoFilename);
+  std::string totalValue = findValueByKey<std::string>(kMemFreeKey, kMeminfoFilename);
   if (std::regex_match(totalValue, kNumberPattern)){ Total = stof(totalValue);}
-  std::string freeValue = findValueByKey<std::string>(memFree, kMeminfoFilename);
+  std::string freeValue = findValueByKey<std::string>(kMemFreeKey, kMeminfoFilename);
   if (std::regex_match(freeValue, kNumberPattern)){ Free = stof(freeValue);}
 
   return (Total-Free)/Total; 
@@ -206,22 +208,20 @@ std::vector<std::string> LinuxParser::CpuUtilization() {
   
 // Parse the total number of processes
 int LinuxParser::TotalProcesses() { 
-  std::string keyFilter = "processes";
   std::string processesValue;
   int totalProcesses {0};
 
-  processesValue = findValueByKey<std::string>(keyFilter, kStatFilename);
+  processesValue = findValueByKey<std::string>(kProcessesKey, kStatFilename);
   if (std::regex_match(processesValue, kNumberPattern)) {totalProcesses = stoi(processesValue);}
   return totalProcesses; 
 }
 
 // Parse the number of running processes
 int LinuxParser::RunningProcesses(){
-  std::string keyFilter = "procs_running";
   std::string runningProcessesValue;
   int runningProcesses {0};
 
-  runningProcessesValue = findValueByKey<std::string>(keyFilter, kStatFilename);
+  runningProcessesValue = findValueByKey<std::string>(kRunningProcessesKey, kStatFilename);
   if (std::regex_match(runningProcessesValue, kNumberPattern)) {runningProcesses = stoi(runningProcessesValue);}
   return runningProcesses; 
   }
@@ -242,7 +242,7 @@ std::string LinuxParser::Ram(int pid) {
       std::istringstream linestream(line);
       while (linestream >> key >> value){
         // I am using VmRSS value instead of VmSize
-        if (key == "VmRSS:"){
+        if (key == kProcMemKey){
           // convert memory from kb to mb
            if (std::regex_match(value, kNumberPattern)) { ram_float = stof(value);}
            ram = std::to_string(round(ram_float/1000*100)/100);
@@ -255,10 +255,9 @@ std::string LinuxParser::Ram(int pid) {
 
 // Parse the user ID associated with a process
 std::string LinuxParser::Uid(int pid) { 
-  std::string keyFilter = "Uid:";
   std::string uid;
   std::string filename = std::to_string(pid) + kStatusFilename;
-  uid = findValueByKey<std::string>(keyFilter, filename)
+  uid = findValueByKey<std::string>(kUIDKey, filename);
   return uid; 
   }
 
