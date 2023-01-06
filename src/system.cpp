@@ -25,7 +25,8 @@ vector<Process>& System::Processes() {
   processes_.clear();
   std::vector<int> proccessIDs_ = LinuxParser::Pids(); 
   for (auto pid: proccessIDs_) {
-    Process p(pid);
+    // Note when using emplace_back() dont need to use constructor, i.e., Process p(pid);
+    // emplace_back will call it automatically 
     processes_.emplace_back(p);
     }
   // sort processes according to RAM (if equal CPU Utilization)
