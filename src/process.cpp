@@ -34,26 +34,38 @@ void Process::CpuUtilization(int pid) {
 float Process::CpuUtilization() { return cpuUtilization_;}
 
 // Setter and Getter for the command that generated this process
-void Process::Command(int pid) { command_ = LinuxParser::Command(pid_);}
+void Process::Command(int pid) { command_ = LinuxParser::Command(pid);}
 string Process::Command() { return command_; }
 
 // Setter and Getter for this process's memory utilization
-void Process::Ram(int pid) { ram_ = LinuxParser::Ram(pid_); }
+void Process::Ram(int pid) { ram_ = LinuxParser::Ram(pid); }
 string Process::Ram() { return ram_; }
 
 // Setter and Getter for the user (name) that generated this process
-void Process::User(int pid) { user_ = LinuxParser::User(pid_); }
+void Process::User(int pid) { user_ = LinuxParser::User(pid); }
 string Process::User() { return user_; }
 
 // Setter and Getter the age of this process (in seconds)
-void Process::UpTime(int pid) { upTime_ = LinuxParser::UpTime(pid_); }
+void Process::UpTime(int pid) { upTime_ = LinuxParser::UpTime(pid); }
 long int Process::UpTime() { return upTime_; }
 
 // Overload the "less than" comparison operator for Process objects
 bool Process::operator<(Process const& other) const { 
     // compare self with the other (lhand of < )
-    if (std::stof(ram_) == std::stof(other.ram_)){
+    float ramself  {0};
+    float ramother {0};
+    std::regex r("^[0-9]*(\\.[0-9]*)?$");
+    if (std::regex_match(ram_, r) && (std::regex_match(other.ram_, r))){
+        ramself = std::stof(ram_);
+        ramother = std::stof(other.ram_);
+    } else if (std::regex_match(ram_, r)) {
+        ramself = std::stof(ram_);
+    } else if (std::regex_match(other.ram_, r)) {
+        ramother = std::stof(ram_);
+    } 
+
+    if ( ramself== ramother){
         return cpuUtilization_ < other.cpuUtilization_;
     }
-    return std::stof(ram_) < std::stof(other.ram_);
+    return ramself < ramother;
 }
