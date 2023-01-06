@@ -22,6 +22,14 @@ const std::string kPasswordPath{"/etc/passwd"};
 //regex pattern to check numbers
 const std::regex kNumberPattern("^[0-9]*(\\.[0-9]*)?$");
 
+// Keys to access values
+const std::string kProcessesKey("processes");
+const std::string kRunningProcessesKey("procs_running");
+const std::string kMemTotalKey("MemTotal:");
+const std::string kMemFreeKey("MemFree:");
+const std::string kUIDKey("Uid:");
+const std::string kProcMemKey("VmRSS:");
+
 // System
 float MemoryUtilization();
 long UpTime();
@@ -57,6 +65,11 @@ std::string Ram(int pid);
 std::string Uid(int pid);
 std::string User(int pid);
 long int UpTime(int pid);
+  
+template <typename T>
+T findValueByKey(std::string const &keyFilter, std::string const &filename);
+template <typename T>
+T getValueOfFile(std::string const &filename);
 };  // namespace LinuxParser
 
 #endif
