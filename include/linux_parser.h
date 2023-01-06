@@ -18,6 +18,7 @@ const std::string kMeminfoFilename{"/meminfo"};
 const std::string kVersionFilename{"/version"};
 const std::string kOSPath{"/etc/os-release"};
 const std::string kPasswordPath{"/etc/passwd"};
+  
 
 // System
 float MemoryUtilization();
@@ -55,5 +56,8 @@ std::string Uid(int pid);
 std::string User(int pid);
 long int UpTime(int pid);
 };  // namespace LinuxParser
+
+//regex pattern to check numbers
+const std::regex kNumberPattern("^[0-9]*(\\.[0-9]*)?$");
 
 #endif
