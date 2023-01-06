@@ -19,6 +19,8 @@ const std::string kVersionFilename{"/version"};
 const std::string kOSPath{"/etc/os-release"};
 const std::string kPasswordPath{"/etc/passwd"};
   
+//regex pattern to check numbers
+const std::regex kNumberPattern("^[0-9]*(\\.[0-9]*)?$");
 
 // System
 float MemoryUtilization();
@@ -55,15 +57,6 @@ std::string Ram(int pid);
 std::string Uid(int pid);
 std::string User(int pid);
 long int UpTime(int pid);
-
-template <typename T>
-T findValueByKey(std::string const &keyFilter, std::string const &filename);
-template <typename T>
-T findValueOfFile(std::string const &filename);
 };  // namespace LinuxParser
-
-//regex pattern to check numbers
-const std::regex kNumberPattern("^[0-9]*(\\.[0-9]*)?$");
-
 
 #endif
