@@ -73,16 +73,24 @@ vector<int> LinuxParser::Pids() {
 // Parse memory information of system and calculate memory utilization
   
 float LinuxParser::MemoryUtilization() { 
+  std::regex r("^[0-9]*(\\.[0-9]*)?$");
   string line, key, value; 
-  double memTotal {5.0}, memFree {5.0};
+  float memTotal {0.1}, memFree {0.1};
   std::ifstream filestream(kProcDirectory + kMeminfoFilename);
   if (filestream.is_open()){
     while (std::getline(filestream, line)){
       std::istringstream linestream(line);
       while(linestream >> key >> value){
-        if (key == "MemTotal:"){memTotal = stof(value);}
-        else if (key == "MemFree:"){memFree = stof(value);}
+        if (key == "MemTotal:"){
+          if (std::regex_match(value, r)){
+            memTotal = stof(value);
+          }
+        } else if (key == "MemFree:"){
+          if (std::regex_match(value, r)){
+           memFree = stof(value);
+          }
         }
+      }
     }
   }
   return (memTotal-memFree)/memTotal; 
