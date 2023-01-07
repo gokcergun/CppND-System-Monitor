@@ -107,7 +107,7 @@ std::vector<int> LinuxParser::Pids() {
 float LinuxParser::MemoryUtilization() { 
   float Total {0.1}, Free {0.1};
 
-  std::string totalValue = findValueByKey<std::string>(kMemFreeKey, kMeminfoFilename);
+  std::string totalValue = findValueByKey<std::string>(kMemTotalKey, kMeminfoFilename);
   if (std::regex_match(totalValue, kNumberPattern)){ Total = stof(totalValue);}
   std::string freeValue = findValueByKey<std::string>(kMemFreeKey, kMeminfoFilename);
   if (std::regex_match(freeValue, kNumberPattern)){ Free = stof(freeValue);}
@@ -235,7 +235,7 @@ std::string LinuxParser::Command(int pid) {
 std::string LinuxParser::Ram(int pid) { 
   std::string line, key, value;
   std::string ram {"0"};
-  float ram_float {0};
+  int ram_int {0};
   std::ifstream filestream(kProcDirectory + std::to_string(pid) + kStatusFilename);
   if (filestream.is_open()){
     while (std::getline(filestream, line)){
@@ -244,8 +244,8 @@ std::string LinuxParser::Ram(int pid) {
         // I am using VmRSS value instead of VmSize
         if (key == kProcMemKey){
           // convert memory from kb to mb
-           if (std::regex_match(value, kNumberPattern)) { ram_float = stof(value);}
-           ram = std::to_string(round(ram_float/1000*100)/100);
+           if (std::regex_match(value, kNumberPattern)) { ram_int = stoi(value);}
+           ram = std::to_string(ram_int);
         }
       }
     }
